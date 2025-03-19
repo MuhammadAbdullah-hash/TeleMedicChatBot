@@ -1,0 +1,4 @@
+openai
+streamlit
+python-dotenv==1.0.1
+tavily-python==0.5.1
