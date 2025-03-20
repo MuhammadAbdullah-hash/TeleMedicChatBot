@@ -124,7 +124,7 @@ class TeleMedicBot:
         response = self.client.chat.completions.create(
             model=self.model,
             messages=self.messages,
-            tools=None#self.tools if is_tool else None,
+            tools=self.tools if is_tool else None,
             tool_choice="auto" if is_tool else None,
             temperature=self.temprature,
             max_tokens=self.max_tokens,
