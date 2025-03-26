@@ -123,7 +123,7 @@ class TeleMedicBot:
         if len(response.get('results', [])) > 0:
             result = [res['content'] for res in response['results']]
 
-        print(f"[WEB_SEARCH] Query => {query} Result => {result}")
+        print(f"[WEB_SEARCH] Query => {query} Result => {result}" , flush=True)
         return result or {"error": "No relevant information found."}
     
     def fetch_medical_info(self , symptoms) : 
@@ -181,13 +181,15 @@ class TeleMedicBot:
             if tool_call.function.name == "fetch_nearby_clinic" : 
                 disease = json.loads(tool_call.function.arguments)["disease"]
                 clinics_data = self.fetch_nearby_clinic(disease)                
-                tool_response = f"Using the following relevant info to answer user query. Info: {str(clinics_data)}. User Question: {user_message}"
+                tool_response = f"Here are few neearby clnics / doctors info: {str(clinics_data)}. Use this clinics / doctors info to answer user query. User Question: {user_message}"
 
             # Add retrieved data and regenerate response (With Streaming)
             self.add_message(
                 role="assistant",
                 content=tool_response
             )
+
+            print(f"[INFO] ToolResp => {tool_response}" , flush=True)
 
             # Step 3: Now generate the final response using streaming
             response_stream = self.get_inference(is_tool=False, stream=True)
