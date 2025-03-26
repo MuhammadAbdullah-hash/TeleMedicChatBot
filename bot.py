@@ -64,7 +64,8 @@ SYSTEM_PROMPT_EN = """
     Only after gathering enough information, process the symptoms and provide possible conditions. 
     If external data is needed, call the 'fetch_medical_info' function.
 
-    If user asks about clinics or doctors near by use 'fetch_nearby_clinic' function to return response.
+    If user asks about clinics or doctors nearby use 'fetch_nearby_clinic' function to return response.
+    User Location is {user_location}
 
     Whenever recommending a user about some disease or giving a suggestion, ALWAYS remind users to consult a doctor for a proper diagnosis.
 """
@@ -85,6 +86,7 @@ SYSTEM_PROMPT_ES = """
     Si necesitas datos externos, llama a la función 'fetch_medical_info'.
 
     Si el usuario pregunta por clínicas o médicos cercanos, usa la función 'fetch_nearby_clinic' para devolver la respuesta.
+    La ubicación del usuario es {user_location}
 
     Siempre que recomiendes algo o hables de enfermedades, RECUERDA a los usuarios que consulten a un médico para un diagnóstico adecuado.
 """
@@ -94,7 +96,7 @@ SYSTEM_PROMPT_ES = """
 
 class TeleMedicBot:
     def __init__(
-            self, lang = "en",  model="gpt-4o-mini", tools=None, temprature=0.3,
+            self, lang = "en",  model="gpt-4o-mini", tools=None, temprature=0.2,
             max_tokens=4096, system_prompt=None , user_location : dict = {}
             ):
         self.lang = lang
@@ -106,6 +108,7 @@ class TeleMedicBot:
         self.client = OpenAI(api_key=OPENAI_API_KEY)
         self.tavily_client = TavilyClient(api_key=TRAVILY_API_KEY)
         self.system_prompt = SYSTEM_PROMPT_ES if self.lang == "es" else SYSTEM_PROMPT_EN
+        self.system_prompt = self.system_prompt.format(user_location=self.user_location)
 
 
         self.messages = [{"role": "system", "content": self.system_prompt}]
