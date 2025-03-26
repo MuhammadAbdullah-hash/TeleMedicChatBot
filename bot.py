@@ -172,7 +172,7 @@ class TeleMedicBot:
         if hasattr(output, "tool_calls") and output.tool_calls:
             # Step 2: Execute Function if required
             tool_call = output.tool_calls[0]
-            print(f'[TOOL_CALL] Tool Call => {tool_call.function}')
+            print(f'[TOOL_CALL] Tool Call => {tool_call.function}' , flush=True)
             if tool_call.function.name == "fetch_medical_info":
                 symptoms = json.loads(tool_call.function.arguments)["symptoms"]
                 medical_data = self.fetch_medical_info(symptoms)

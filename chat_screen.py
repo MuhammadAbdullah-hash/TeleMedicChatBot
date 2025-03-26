@@ -30,7 +30,6 @@ def get_bot_response(user_input):
 
 def get_user_location(client_ip):
     try:
-        # response = requests.get("https://ipinfo.io/json")
         print(f"ClientIP = {client_ip}" , flush=True)
         response = requests.get(f"https://ipinfo.io/{client_ip}/json")
         data = response.json()
