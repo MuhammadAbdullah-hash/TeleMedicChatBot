@@ -1,6 +1,7 @@
 import requests
 import streamlit as st
 from bot import TeleMedicBot
+# from streamlit_javascript import st_javascript
 
 
 
@@ -30,13 +31,42 @@ def get_bot_response(user_input):
         response_text += chunk
         yield response_text
 
+# def get_user_location():
+#     try:
+#         response = requests.get("https://ipinfo.io/json")
+#         data = response.json()
+#         return { "status" : True , "data" : data}
+#     except Exception as e:
+#         return { "status" : False }
+
+# def get_user_location():
+#     user_ip = st_javascript("fetch('https://api64.ipify.org?format=json').then(res => res.json()).then(data => data.ip)")
+    
+#     if user_ip:
+#         try:
+#             response = requests.get(f"https://ipinfo.io/{user_ip}/json")
+#             data = response.json()
+#             return { "status": True, "data": data }
+#         except Exception as e:
+#             return { "status": False, "error": str(e) }
+#     return { "status": False, "error": "Could not retrieve IP" }
+
+
 def get_user_location():
     try:
-        response = requests.get("https://ipinfo.io/json")
-        data = response.json()
-        return { "status" : True , "data" : data}
+        response = requests.get("https://api64.ipify.org?format=json")
+        user_ip = response.json().get("ip")
+        print(f"UserIP : {user_ip}")
+        if user_ip:
+            location_response = requests.get(f"https://ipinfo.io/{user_ip}/json")
+            location_data = location_response.json()
+            return {"status": True, "data": location_data}
     except Exception as e:
-        return { "status" : False }
+        return {"status": False, "error": str(e)}
+
+    return {"status": False, "error": "Could not retrieve IP"}
+
+
 
 # Main Chat Screen
 def chat_screen():

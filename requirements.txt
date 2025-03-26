@@ -2,3 +2,4 @@ streamlit
 openai==1.66.5
 python-dotenv==1.0.1
 tavily-python==0.5.1
+streamlit-javascript==0.1.5
