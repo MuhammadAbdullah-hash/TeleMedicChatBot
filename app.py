@@ -3,6 +3,8 @@ import streamlit as st
 from chat_screen import chat_screen
 from landing_page import landing_page
 import streamlit.components.v1 as components
+from streamlit_js_eval import streamlit_js_eval
+
 
 
 
@@ -12,27 +14,21 @@ st.set_page_config(page_title="TeleMedicine Chatbot", page_icon=":hospital:", la
 
 
 
-# # JavaScript to fetch client IP and send it to Streamlit
-ip_fetch_code = """
-    <script>
-        async function fetchIP() {
-            let response = await fetch('https://ipinfo.io/json');
-            let data = await response.json();
-            let ip = data.ip;
-            console.log("Client IP:", ip);
+# Get client IP using JavaScript and return it to Python
+client_ip = streamlit_js_eval(
+    js_expressions="fetch('https://ipinfo.io/json').then(res => res.json()).then(data => data.ip)",
+    key="get_client_ip"
+)
 
-            // Send the IP to Streamlit
-            localStorage.setItem("client_ip", ip);            
-        }
-        fetchIP();
-    </script>
-"""
+# Store in session state
+if client_ip:
+    st.session_state["client_ip"] = client_ip
 
-
-
-# Inject JavaScript into Streamlit
-components.html(ip_fetch_code, height=0)
-
+# Display the Client IP for debugging
+if client_ip:
+    st.success(f"Client IP: {client_ip}")
+else:
+    st.warning("Fetching Client IP...")
 
 
 
