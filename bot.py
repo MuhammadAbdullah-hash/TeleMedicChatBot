@@ -229,7 +229,7 @@ class TeleMedicBot:
                     [-] UserLocation::{self.user_location}
                     [-] SystemPrompt::{self.system_prompt[:80].strip()}
                 """.strip()
-        print(doc_string)
+        print(doc_string , flush=True)
         return doc_string
 
 if __name__ == "__main__":
