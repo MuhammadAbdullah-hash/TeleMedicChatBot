@@ -20,15 +20,10 @@ client_ip = streamlit_js_eval(
     key="get_client_ip"
 )
 
-# Store in session state
+
 if client_ip:
     st.session_state["client_ip"] = client_ip
 
-# Display the Client IP for debugging
-if client_ip:
-    st.success(f"Client IP: {client_ip}")
-else:
-    st.warning("Fetching Client IP...")
 
 
 
@@ -135,10 +130,12 @@ def main():
         login_screen()
     elif st.session_state.page == "chat":
         if st.session_state.logged_in:
-            chat_screen()
+            chat_screen( client_ip = st.session_state.get("client_ip") )
         else:
             st.session_state.page = "login"
             st.rerun()
 
 if __name__ == "__main__":
-    main()
+
+    if st.session_state.get("client_ip"):
+        main()

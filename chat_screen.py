@@ -28,9 +28,11 @@ def get_bot_response(user_input):
         response_text += chunk
         yield response_text
 
-def get_user_location():
+def get_user_location(client_ip):
     try:
-        response = requests.get("https://ipinfo.io/json")
+        # response = requests.get("https://ipinfo.io/json")
+        print(f"ClientIP = {client_ip}" , flush=True)
+        response = requests.get(f"https://ipinfo.io/{client_ip}/json")
         data = response.json()
         return { "status" : True , "data" : data}
     except Exception as e:
@@ -40,11 +42,11 @@ def get_user_location():
 
 
 # Main Chat Screen
-def chat_screen():
+def chat_screen(client_ip):
     if "user_ip" not in st.session_state:
-        user_location = get_user_location()
+        user_location = get_user_location(client_ip)
         if user_location : 
-            ip = user_location.get("data" , {}).get("ip")
+            ip = client_ip
             user_location = user_location.get("data" , {})
             st.session_state.user_ip = ip
             st.session_state.user_location = user_location
