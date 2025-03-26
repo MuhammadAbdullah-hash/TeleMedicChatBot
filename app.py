@@ -1,9 +1,23 @@
+import requests
 import streamlit as st
 from chat_screen import chat_screen
 from landing_page import landing_page
 
+
 # ----- Page Configuration -----
 st.set_page_config(page_title="TeleMedicine Chatbot", page_icon=":hospital:", layout="wide")
+
+
+def get_client_ip():
+    try:
+        response = requests.get("https://api64.ipify.org?format=json")
+        ip = response.json().get("ip", "Unable to fetch IP")
+        return ip
+    except Exception as e:
+        return f"Error: {str(e)}"
+
+st.write("Your IP Address:", get_client_ip())
+
 
 # ----- Custom CSS for Styling -----
 st.markdown(
