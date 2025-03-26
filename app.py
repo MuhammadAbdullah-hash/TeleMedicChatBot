@@ -2,21 +2,39 @@ import requests
 import streamlit as st
 from chat_screen import chat_screen
 from landing_page import landing_page
+import streamlit.components.v1 as components
+
 
 
 # ----- Page Configuration -----
 st.set_page_config(page_title="TeleMedicine Chatbot", page_icon=":hospital:", layout="wide")
 
 
-def get_client_ip():
-    try:
-        response = requests.get("https://api64.ipify.org?format=json")
-        ip = response.json().get("ip", "Unable to fetch IP")
-        return ip
-    except Exception as e:
-        return f"Error: {str(e)}"
 
-st.write("Your IP Address:", get_client_ip())
+
+# # JavaScript to fetch client IP and send it to Streamlit
+ip_fetch_code = """
+    <script>
+        async function fetchIP() {
+            let response = await fetch('https://ipinfo.io/json');
+            let data = await response.json();
+            let ip = data.ip;
+            console.log("Client IP:", ip);
+
+            // Send the IP to Streamlit
+            localStorage.setItem("client_ip", ip);            
+        }
+        fetchIP();
+    </script>
+"""
+
+
+
+# Inject JavaScript into Streamlit
+components.html(ip_fetch_code, height=0)
+
+
+
 
 
 # ----- Custom CSS for Styling -----
