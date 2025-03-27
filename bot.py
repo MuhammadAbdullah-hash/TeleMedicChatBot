@@ -64,7 +64,7 @@ SYSTEM_PROMPT_EN = """
     Only after gathering enough information, process the symptoms and provide possible conditions. 
     If external data is needed, call the 'fetch_medical_info' function.
 
-    If user asks about clinics or doctors nearby use 'fetch_nearby_clinic' function to return response.
+    If user asks about clinics or doctors nearby use 'fetch_nearby_clinic' function to return response and also the url of clinic/doctor returned from function.
     User Location is {user_location}
 
     Whenever recommending a user about some disease or giving a suggestion, ALWAYS remind users to consult a doctor for a proper diagnosis.
@@ -85,8 +85,8 @@ SYSTEM_PROMPT_ES = """
     Solo después de recopilar suficiente información, analiza los síntomas y proporciona posibles condiciones. 
     Si necesitas datos externos, llama a la función 'fetch_medical_info'.
 
-    Si el usuario pregunta por clínicas o médicos cercanos, usa la función 'fetch_nearby_clinic' para devolver la respuesta.
-    La ubicación del usuario es {user_location}
+        Si el usuario pregunta sobre clínicas o médicos cercanos, utiliza la función 'fetch_nearby_clinic' para devolver la respuesta y también la URL de la clínica o del médico que devuelve la función.
+        La ubicación del usuario es {user_location}
 
     Siempre que recomiendes algo o hables de enfermedades, RECUERDA a los usuarios que consulten a un médico para un diagnóstico adecuado.
 """
@@ -117,14 +117,17 @@ class TeleMedicBot:
     def add_message(self, role, content):
         self.messages.append({"role": role, "content": content.strip()})
 
-    def web_search_tool(self, query):
+    def web_search_tool(self, query , reuturn_urls = False):
         """ 
             Calls the external API (Tavily) to fetch medical data.
         """
         result = None
         response = self.tavily_client.search(query)
         if len(response.get('results', [])) > 0:
-            result = [res['content'] for res in response['results']]
+            if reuturn_urls : 
+                result = [ { "content" : res['content'] , "url" : res['url'] } for res in response['results']]
+            else : 
+                result = [res['content'] for res in response['results']]
 
         print(f"[WEB_SEARCH] Query => {query} Result => {result}" , flush=True)
         return result or {"error": "No relevant information found."}
@@ -144,7 +147,7 @@ class TeleMedicBot:
         city = self.user_location.get("city")
         country = self.user_location.get("country")
         query = f'doctors or clinics in {city}, {country} for {disease}'
-        response = self.web_search_tool(query=query)
+        response = self.web_search_tool(query=query , reuturn_urls=True)
         return response
 
         
